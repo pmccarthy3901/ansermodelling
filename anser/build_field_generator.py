@@ -1,6 +1,6 @@
 import numpy as np
-from coil_dimension_calc import coil_dimension_calc
-from local_to_global import local_to_global
+from .coil_dimension_calc import coil_dimension_calc
+from .local_to_global import local_to_global
 
 def build_field_generator(
     N: int,

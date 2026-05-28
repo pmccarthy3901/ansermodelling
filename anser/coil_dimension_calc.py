@@ -34,8 +34,8 @@ def coil_dimension_calc(
     shortening = np.concatenate([[0, 0, 0], np.repeat(ramp, 2)])  # length 4*N - 1
     seg_len = np.concatenate([l - shortening * ll_s, [l - ll_s]])  # length 4*N
 
-    x_traj = [0,-1,0,1]
-    y_traj = [1,0,-1,0]
+    x_traj = np.array([0,-1,0,1])
+    y_traj = np.array([1,0,-1,0])
 
     q = np.arange(4 * N) % 4  # direction index for each segment
     x = np.concatenate([[0.0], np.cumsum(x_traj[q] * seg_len)])  # shape (4*N + 1,)

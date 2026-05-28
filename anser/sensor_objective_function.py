@@ -1,5 +1,5 @@
 import numpy as np
-from field_coil_calc import field_coil_calc
+from .field_coil_calc import field_coil_calc
 
 def sensor_objective_function(
     current_PO : np.ndarray,
