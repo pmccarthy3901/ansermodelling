@@ -1,6 +1,6 @@
 # Anser EMT — Python Implementation
 
-A Python reimplementation of the [Anser EMT](https://osf.io/47q8q/) electromagnetic tracking system, originally written in MATLAB by Alex Jaeger and Kilian O'Donoghue at UCC.
+A Python reimplementation of the [Anser EMT](https://osf.io/47q8q/) electromagnetic tracking system, originally written in MATLAB.
 
 ## Overview
 
