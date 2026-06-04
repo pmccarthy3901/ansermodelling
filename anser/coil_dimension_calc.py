@@ -16,6 +16,7 @@ def coil_dimension_calc(
         Number of turns per layer. Total turn count is 2*N (top + bottom).
     l : float
         Side length of the outermost square turn (m) : float
+    w : float 
         Width of each copper trace (m).
     s : float
         Edge-to-edge spacing between adjacent traces (m).
