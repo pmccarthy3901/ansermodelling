@@ -1,0 +1,202 @@
+\documentclass[12pt,a4paper]{report}
+
+\setcounter{secnumdepth}{3} %The level of sections that get numbered
+\setcounter{tocdepth}{3} %The level of sections to appear in ToC
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{braket}
+\usepackage{calligra}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{aurical}
+\usepackage[T1]{fontenc}
+
+\definecolor{codegreen}{rgb}{0.133,0.545,0.133}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.827}
+\definecolor{codeblue}{rgb}{0.0,0.39,0.75}
+\definecolor{codeback}{rgb}{0.97,0.97,0.97}
+
+\lstdefinestyle{python}{
+  language=Python,
+  backgroundcolor=\color{codeback},
+  commentstyle=\color{codegreen},
+  keywordstyle=\color{codeblue}\bfseries,
+  stringstyle=\color{codepurple},
+  numberstyle=\tiny\color{codegray},
+  basicstyle=\ttfamily\small,
+  breakatwhitespace=false,
+  breaklines=true,
+  keepspaces=true,
+  numbers=left,
+  numbersep=5pt,
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  tabsize=4,
+  xleftmargin=0pt,
+  xrightmargin=0pt,
+  framesep=4pt,
+  frame=single,
+  rulecolor=\color{codegray},
+}
+
+\begin{document}
+\section{Forward Model}
+Maxwell's equations in free space are linear so the total magnetic field will be the sum of each individual straight line. Our main goal then, is to find the magnetic field generated at an observer point $p$ due to the current flowing along $\vec{a}$.  
+
+We start by defining vectors $\vec{a}$, $\vec{b}$, and $\vec{c}$. 
+\begin{itemize}
+  \item $\vec{a}$ points along the current filament. \\
+  \item $\vec{b}$ points from the observer to the end of the filament. \\
+  \item $\vec{c}$ points from the observer to the start of the filament.
+\end{itemize}
+
+Note that throughout I use the convention $\left \vert \vec{a} \right \vert = a$.
+
+Now, we use the Biot Savart Law to find the magnetic field in each of the lines. 
+
+\begin{equation}
+  \vec{B} = \frac{\mu_0 I}{4\pi} \int \frac{d\vec{l}\times \vec{r}}{r^3}  
+  \label{eq:}
+\end{equation}
+
+To work out this integral we first parametrise $\vec{r}$ in time, yielding:
+\begin{align*}
+  \vec{r}(t) &= \vec{c} + \vec{a}t \text{, } t \in [0,1] \\
+  d\vec{l} &= \vec{a}dt
+\end{align*}
+
+Substituting in gives:
+
+\begin{equation}
+  \vec{B} = \frac{\mu_0 I}{4\pi} \int_{0}^{1} \frac{(\vec{a}dt)\times (\vec{c} + \vec{a}t)}{\left \vert \vec{c} +  t\vec{a}\right\vert^3}
+\end{equation}
+
+Noting that $\vec{a} \times \vec{a} = 0$, and that $\vec{a}$ and $\vec{c}$ are constants, this simplifies to:
+
+\begin{equation} 
+  \vec{B} = \frac{\mu_0 I}{4\pi}(\vec{a} \times \vec{c}) \int_{0}^{1}  \frac{dt}{\left \vert \vec{c} +  t\vec{a}\right\vert^3}
+\end{equation}
+
+The denominator must now be simplified.
+\begin{equation}
+  \left\vert \vec{c} + t\vec{a} \right \vert ^3 = \left( c^2 + t^2a^2 + 2t(\vec{a}\cdot \vec{c}) \right)^{3/2}
+\end{equation}
+
+For simplicity, let $\beta = (\vec{a} \cdot \vec{c})$
+
+\begin{equation}
+  \left\vert \vec{c} + t\vec{a} \right \vert ^3 =  \left( a^2t^2 + 2\beta t + c^2  \right)^{3/2}
+\end{equation}
+
+Completing the square:
+
+\begin{equation}
+  \left\vert \vec{c} + t\vec{a} \right \vert ^3 =  a^{3} \left( \left ( t + \frac{\beta}{a^2} \right)^2 -\frac{\beta^2}{a^4} + \frac{c^2}{a^2} \right)^{3/2}
+\end{equation}
+
+Now let $u = t + \frac{\beta}{a^2}$, $du = dt$, $u(0) = \frac{\beta}{a^2}$, $u(1) = 1 + \frac{\beta}{a^2}$. Also, let $\delta = \frac{c^2}{a^2} - \frac{\beta^2}{a^4}$.
+
+Subbing back into our Biot Savart Formula gives:
+
+\begin{equation}
+  \vec{B} = \frac{\mu_0 I}{4\pi} \frac{\vec{a} \times \vec{c}}{a^3} \int_{\frac{\beta}{a^2}}^{1+\frac{\beta}{a^2}} \frac{du}{\left(u^2 + \delta\right)^{3/2}}
+\end{equation}
+
+Want to use the identity $\sec^2\phi = 1 + \tan^2\phi$, to do so, multiply across by a factor of $\delta^{3/2}$
+
+\begin{equation}
+  \vec{B} = \frac{\mu_0 I}{4\pi} \frac{\vec{a} \times \vec{c}}{a^3\delta^{3/2}} \int_{\frac{\beta}{a^2}}^{1+\frac{\beta}{a^2}} \frac{du}{\left(\frac{u^2}{\delta} + 1 \right)^{3/2}}
+\end{equation}
+
+Now that it's in the correct form let: $\tan^2\phi = \frac{u^2}{\delta}$, then: 
+\begin{align*}
+  \tan\phi &= \frac{u}{\sqrt{\delta}} \\
+  \sec^2\phi \, d\phi &= \frac{1}{\sqrt{\delta}} du \\
+  \phi\left(\frac{\beta}{a^2}\right) &= \arctan \left( \frac{\beta}{a^2\sqrt{\delta}} \right) \\
+  \phi\left( 1 + \frac{\beta}{a^2} \right) &= \arctan \left( \frac{1+\frac{\beta}{a^2}}{\sqrt{\delta}} \right)
+\end{align*}
+
+Substituting back in:
+\begin{equation}
+  \vec{B} = \frac{\mu_0 I}{4\pi} \frac{\vec{a} \times \vec{c}}{a^3\delta^{3/2}} \int_{\arctan\left (\frac{\beta}{a^2\sqrt{\delta}}\right)}^{\arctan\left(\frac{1}{\sqrt{\delta}}\left(1+\frac{\beta}{a^2}\right)\right)} \frac{\sqrt{\delta} \sec^2 \phi \, d\phi}{\left(1 + \tan^2\phi \right)^{3/2}}
+\end{equation}
+
+Using the identities $\sec^2 \phi = 1 + \tan^2 \phi$ and $\cos \phi = \frac{1}{\sec \phi}$ and simplifying yields:
+
+\begin{equation}
+  \vec{B} = \frac{\mu_0 I}{4\pi} \frac{\vec{a} \times \vec{c}}{a^3\delta} \int_{\arctan\left (\frac{\beta}{a^2\sqrt{\delta}}\right)}^{\arctan\left(\frac{1}{\sqrt{\delta}}\left(1+\frac{\beta}{a^2}\right)\right)} \cos\phi \, d\phi
+\end{equation}
+
+Solving:
+
+\begin{equation}
+  \vec{B} = \frac{\mu_0 I}{4\pi} \frac{\vec{a} \times \vec{c}}{a^3\delta} \left ( \sin\left( \arctan\left(\frac{1}{\sqrt{\delta}}\left(1+\frac{\beta}{a^2}\right)\right)\right) - \sin \left( \arctan\left (\frac{\beta}{a^2\sqrt{\delta}}\right) \right) \right )
+\end{equation}
+
+Now, we must consider a right angled triangle to work this out. $\sin\phi = \frac{o}{h}$, $\tan\phi = \frac{o}{a}$ therefore $\sin\left( \arctan \left( \frac{o}{a} \right) \right) = \frac{o}{\sqrt{o^2 + a^2}}$ by pythagoras.
+
+\begin{equation}
+  \vec{B} = \frac{\mu_0 I}{4\pi} \frac{\vec{a} \times \vec{c}}{a^3\delta} \left( \left( \frac{1 + \frac{\beta}{a^2}}{\sqrt{\delta + \left( 1 + \frac{\beta}{a^2} \right)^2}} \right) - \left( \frac{\beta}{\sqrt{\beta^2 + a^4 \delta}} \right)  \right) 
+\end{equation}
+
+Recalling $\delta = \frac{c^2}{a^2} - \frac{\beta^2}{a^4}$, $\beta = \vec{a} \cdot \vec{c}$, and looking at each of the denominators:
+\begin{align*}
+  \sqrt{\delta + \left( 1 + \frac{\beta}{a^2} \right)^2} &= \sqrt{\frac{c^2}{a^2} - \frac{\beta^2}{a^4} + 1 + 2\frac{\beta}{a^2} + \frac{\beta^2}{a^4}} \\
+                             &= \sqrt{1 + \frac{c^2}{a^2} + \frac{2}{a^2} \left(\vec{a} \cdot \vec{c} \right)} \\
+                             &= \frac{1}{a} \sqrt{a^2 + c^2 + 2\left(\vec{a} \cdot \vec{c}\right)} \\
+                             &= \frac{1}{a} \left \vert \vec{a} + \vec{c} \right \vert \\
+                             &= \frac{b}{a}
+\end{align*}
+
+\begin{align*}
+  \sqrt{\beta^2 + a^4 \delta} &= \sqrt{\beta^2 + a^2c^2 - \beta^2} \\
+                              &= \sqrt{a^2c^2} \\
+                              &= ac
+\end{align*}
+
+Subbing into our formula for $\vec{B}$ now gives:
+
+\begin{equation}
+  \vec{B} = \frac{\mu_0 I}{4\pi} \frac{\vec{a}\times \vec{c}}{ac^2 - \frac{\left(\vec{a} \cdot \vec{c}\right)^2}{a}} \left( \frac{1 + \frac{\vec{a}\cdot{\vec{c}}}{a^2}}{\frac{b}{a}} - \frac{\vec{a} \cdot \vec{c}}{ac} \right)
+\end{equation}
+
+Simpifying a small bit gives:
+
+\begin{equation}
+\vec{B} = \frac{\mu_0 I}{4\pi} \frac{\vec{a}\times \vec{c}}{a^2c^2 - \left(\vec{a} \cdot \vec{c}\right)^2} \left( \frac{a^2 + \vec{a}\cdot\vec{c}}{b} - \frac{\vec{a} \cdot \vec{c}}{c} \right)
+\end{equation}
+
+Now, picking out these two parts and simplifying, where $\theta$ is the angle subtended by $\vec{a}$ and $\vec{c}$:
+\begin{align*}
+  a^2c^2 - \left( \vec{a} \cdot \vec{c} \right)^2 &= a^2c^2 - a^2c^2\cos^2(\theta) \\
+                               &= a^2c^2(1 - \cos^2\theta) \\
+                               &= a^2c^2\sin^2\theta \\
+                               &= \left \vert \vec{a} \times \vec{c} \right \vert ^2
+\end{align*}
+\begin{align*}
+  a^2 + \vec{a} \cdot \vec{c} &= \vec{a} \cdot \vec{a} + \vec{a} \cdot \vec{c} \\
+                              &= \vec{a} \cdot \left(\vec{a} + \vec{c}\right) \\
+                              &= \vec{a} \cdot \vec{b}
+\end{align*}
+This gives us our final form:
+\begin{equation}
+  \vec{B} = \frac{\mu_0 I}{4\pi} \frac{\vec{a} \times \vec{c}}{\left \vert \vec{a} \times \vec{c} \right \vert^2 } \left( \frac{\vec{a} \cdot \vec{b}}{b} - \frac{\vec{a} \cdot \vec{c}}{c} \right)
+\end{equation}
+
+
+
+
+
+
+
+
+
+\end{document}
