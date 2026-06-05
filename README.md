@@ -8,7 +8,9 @@ Anser EMT is an open-source platform for tracking induction coil sensors in 3D s
 
 ## Structure
 
-- `anser/` — Core modules (coil geometry, forward model, solver, coordinate transforms)
+
+- `anser/` — Core modules for simulation.
+- `report/` — Report chapters.
 - `demos/` — Jupyter notebooks demonstrating the pipeline
 
 ## References
