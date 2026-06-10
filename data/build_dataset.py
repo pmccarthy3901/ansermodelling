@@ -4,9 +4,9 @@ import numpy as np
 def build_dataset(
         N : int = 10000,
         bounds : np.ndarray = np.array([
-            [-0.15,0.15],
-            [-0.15,0.15],
-            [0,0.5],
+            [-0.25,0.25],
+            [-0.25,0.25],
+            [0,0.25],
             [-np.pi,np.pi],
             [0,np.pi/2]
         ]),
@@ -26,7 +26,7 @@ def build_dataset(
 
     Returns 
     -------
-    x_train, y_train : np.ndarray shape (N,num_coils,3), np.ndarray shape (N,5)
+    x_train, y_train : np.ndarray shape (N,num_coils), np.ndarray shape (N,5)
     '''
 
 
@@ -40,15 +40,27 @@ def build_dataset(
     theta = rng.uniform(bounds[3,0],bounds[3,1],N)
     phi = rng.uniform(bounds[4,0],bounds[4,1],N)
 
-    y_train = np.stack((x,y,z,theta,phi), axis = -1)
+    #shape (N,3)
+    sensor_normal = np.stack([np.sin(theta)*np.cos(phi),
+                              np.sin(theta)*np.sin(phi),
+                              np.cos(theta)], axis = -1) 
+   
+    #shape (N,1,3)
+    sensor_normal = sensor_normal[:, np.newaxis, :]
+
+    #shape (N,5)
+    ys = np.stack((x,y,z,theta,phi), axis = -1)
     
-    x_train = np.array([field_coil_calc(I,coils_global,y_train[i,:3]) for i in range(N)])
+    #shape (N,8,3)
+    h = np.array([field_coil_calc(I,coils_global,ys[i,:3]) for i in range(N)])
     
-    return x_train, y_train
+    xs = np.sum(sensor_normal * h, axis = -1)
+
+    return xs, ys
 
 
 if __name__ == "__main__":
-    x_train , y_train = build_dataset()
+    xs , ys = build_dataset()
 
-    np.savez("data/dataset.npz", x_train=x_train, y_train=y_train)
-    print(f"Saved dataset: x_train {x_train.shape}, y_train {y_train.shape} to data/dataset.npz")
+    np.savez("data/dataset.npz", xs=xs, ys=ys)
+    print(f"Saved dataset: xs {xs.shape}, ys {ys.shape} to data/dataset.npz")
