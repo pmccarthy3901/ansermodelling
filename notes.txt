@@ -1,0 +1,8 @@
+kalman filtering - look into into
+kalmanfilter.net
+
+collect papers
+
+zotero
+
+
