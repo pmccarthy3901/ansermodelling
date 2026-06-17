@@ -2,7 +2,7 @@ from anser import *
 import numpy as np
 
 def build_dataset(
-        N : int = 10000,
+        N : int = 100000,
         bounds : np.ndarray = np.array([
             [-0.25,0.25],
             [-0.25,0.25],
