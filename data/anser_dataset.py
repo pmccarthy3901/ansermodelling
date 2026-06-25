@@ -10,9 +10,19 @@ class AnserDataset(Dataset):
         ---------- 
         path : string
             path to dataset npz file.
+        x_mean : float 
+            mean x value used for input normalisation.
+        x_std : float 
+            stdev of x used for input normalisation.
+        noise_std : float 
+            standard deviation of noise to be added to inputs. Default = 0
     '''
 
-    def __init__(self,path, x_mean = None, x_std = None):
+    def __init__(self,
+                 path, 
+                 x_mean : float = None, 
+                 x_std : float = None, 
+                 noise_std : float = 0):
         data = np.load(path)
         
         self.x = torch.tensor(data["xs"], dtype=torch.float32)
@@ -20,6 +30,7 @@ class AnserDataset(Dataset):
 
         self.x_mean = x_mean
         self.x_std = x_std
+        self.noise_std = noise_std
 
     def __len__(self):
         return len(self.x)
@@ -27,17 +38,35 @@ class AnserDataset(Dataset):
     def __getitem__(self,idx):
 
         x = self.x[idx]
-        
+        y = self.y[idx]
+
         if self.x_mean is not None and self.x_std is not None:
             x = (x - self.x_mean) / self.x_std
+        
+        if self.noise_std > 0:
+            x = x + torch.randn_like(x) * self.noise_std
 
-        return x, self.y[idx]
+        return x, y
 
 
 
 
-def make_dataloaders(path, train_frac = 0.8, batch_size = 32):
+def make_dataloaders(path : string,
+                     train_frac : float = 0.8,
+                     batch_size : int = 32):
 
+    '''
+        Makes training and testing dataloaders from dataset npz file.
+
+        Parameters 
+        ---------- 
+        path : string 
+            path to dataset npz file 
+        train_frac : float 
+            fraction of data used for training, default = 0.8
+        batch_size : int 
+            Batch size, default = 32
+    '''
     full_dataset = AnserDataset(path)
 
     n = len(full_dataset)
