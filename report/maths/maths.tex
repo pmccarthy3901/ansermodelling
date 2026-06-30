@@ -48,7 +48,7 @@
 }
 
 \begin{document}
-\section{Forward Model}
+\section{Backward Model}
 Maxwell's equations in free space are linear so the total magnetic field will be the sum of each individual straight line. Our main goal then, is to find the magnetic field generated at an observer point $p$ due to the current flowing along $\vec{a}$.  
 
 We start by defining vectors $\vec{a}$, $\vec{b}$, and $\vec{c}$. 
@@ -187,12 +187,14 @@ Now, picking out these two parts and simplifying, where $\theta$ is the angle su
                               &= \vec{a} \cdot \vec{b}
 \end{align*}
 This gives us our final form:
-\begin{equation}
+\begin{equation}\label{eq:backwards}
   \vec{B} = \frac{\mu_0 I}{4\pi} \frac{\vec{a} \times \vec{c}}{\left \vert \vec{a} \times \vec{c} \right \vert^2 } \left( \frac{\vec{a} \cdot \vec{b}}{b} - \frac{\vec{a} \cdot \vec{c}}{c} \right)
 \end{equation}
+Now, remembering that this equation is linear and that each coil is made up of straight line filaments we get:
 
-
-
+\begin{equation}
+  \vec{B}_{\text{coil}} = \sum_{i = 0}^N  
+\end{equation}
 
 
 

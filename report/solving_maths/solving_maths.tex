@@ -1,0 +1,75 @@
+
+\documentclass[12pt,a4paper]{report}
+
+\setcounter{secnumdepth}{3} %The level of sections that get numbered
+\setcounter{tocdepth}{3} %The level of sections to appear in ToC
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{braket}
+\usepackage{calligra}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{aurical}
+\usepackage[T1]{fontenc}
+
+\definecolor{codegreen}{rgb}{0.133,0.545,0.133}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.827}
+\definecolor{codeblue}{rgb}{0.0,0.39,0.75}
+\definecolor{codeback}{rgb}{0.97,0.97,0.97}
+
+\lstdefinestyle{python}{
+  language=Python,
+  backgroundcolor=\color{codeback},
+  commentstyle=\color{codegreen},
+  keywordstyle=\color{codeblue}\bfseries,
+  stringstyle=\color{codepurple},
+  numberstyle=\tiny\color{codegray},
+  basicstyle=\ttfamily\small,
+  breakatwhitespace=false,
+  breaklines=true,
+  keepspaces=true,
+  numbers=left,
+  numbersep=5pt,
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  tabsize=4,
+  xleftmargin=0pt,
+  xrightmargin=0pt,
+  framesep=4pt,
+  frame=single,
+  rulecolor=\color{codegray},
+}
+
+\begin{document}
+The problem is framed as an inverse problem. The backward map takes position and orientation data and calculated 8 flux values from each of the coils. Our goal is to approximate an inverse to this map. To do so, we first try to understand the backward map.
+
+First we define a position/orientation vector $\mathbf{p} \in \mathbb{R}^5$ \\
+\begin{equation}
+  \mathbf{p} = 
+  \begin{bmatrix}
+    x \\ y \\ z \\ \theta \\ \phi 
+  \end{bmatrix}
+\end{equation}
+    
+Then we define a vector of fluxes, $\mathbf{\Phi} \in \mathbb{R}^8$
+\begin{equation}
+  \mathbf{\Phi} = 
+  \begin{bmatrix}
+    \Phi_1 \\ \Phi_2 \\ \Phi_3 \\ \Phi_4 \\ \Phi_5 \\ \Phi_6 \\ \Phi_7 \\ \Phi_8 
+  \end{bmatrix}
+\end{equation}
+
+Now we can write the backward map: $\mathbf{\Phi}(\mathbf{p}): \mathbb{R}^5 \rightarrow \mathbb{R}^8$. More precisely,
+\begin{equation}
+  \Phi_i = \mathbf{H}_i(x,y,z) \cdot \hat{n}(\theta,\phi)
+\end{equation}
+where $\mathbf{H}_i$ is the magnetic field calculated at $(x,y,z)$ due to coil $i$ using eqaution \eqref{eq:biot_savart_final}, and $\hat{n}(\theta,\phi)$ is the vector normal to the sensor.
+\end{document}
