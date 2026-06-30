@@ -49,16 +49,26 @@
 }
 
 \begin{document}
-The problem is framed as an inverse problem. The backward map takes position and orientation data and calculated 8 flux values from each of the coils. Our goal is to approximate an inverse to this map. To do so, we first try to understand the backward map.
-
-First we define a position/orientation vector $\mathbf{p} \in \mathbb{R}^5$ \\
+\section{The Backward Map}
+The problem is framed as an inverse problem. The backward map takes position and orientation data and calculated 8 flux values from each of the coils. Our goal is to approximate an inverse to this map. To do so, we first try to understand the backward map 
+\subsection{Definition and properties.}
+First we define a pose vector $\mathbf{p} \in \mathbb{R}^5$ \\
 \begin{equation}
   \mathbf{p} = 
   \begin{bmatrix}
     x \\ y \\ z \\ \theta \\ \phi 
   \end{bmatrix}
 \end{equation}
-    
+
+In actuality, $\mathbf{p}$ is restricted to a set $\Omega \subset \mathbb{R}^5$
+
+\begin{equation}
+  \Omega = \left\{
+  \begin{bmatrix} x \\ y \\ z \\ \theta \\ \phi \end{bmatrix} \in \mathbb{R}^5 : 
+  \begin{matrix} x \in (-0.125,0.125) \\ y \in (-0.125,0.125) \\ z \in (0,0.25) \\ \theta \in (0,\pi/2) \\ \phi \in [0,2\pi) \end{matrix}
+  \right\}
+\end{equation}
+
 Then we define a vector of fluxes, $\mathbf{\Phi} \in \mathbb{R}^8$
 \begin{equation}
   \mathbf{\Phi} = 
@@ -69,7 +79,36 @@ Then we define a vector of fluxes, $\mathbf{\Phi} \in \mathbb{R}^8$
 
 Now we can write the backward map: $\mathbf{\Phi}(\mathbf{p}): \mathbb{R}^5 \rightarrow \mathbb{R}^8$. More precisely,
 \begin{equation}
-  \Phi_i = \mathbf{H}_i(x,y,z) \cdot \hat{n}(\theta,\phi)
+  \Phi_i = \mathbf{H}_i(x,y,z) \cdot \hat{n}(\theta,\phi) 
 \end{equation}
 where $\mathbf{H}_i$ is the magnetic field calculated at $(x,y,z)$ due to coil $i$ using eqaution \eqref{eq:biot_savart_final}, and $\hat{n}(\theta,\phi)$ is the vector normal to the sensor.
+
+Since this maps from $\mathbb{R}^5$ to $\mathbb{R}^8$ it is clear that the backwards function is not surjective. Looking at injectivity now: we see that 
+
+\begin{equation}
+  \Phi\left(
+    \begin{bmatrix} x \\ y \\ z \\ 0 \\ \phi_1 \end{bmatrix}
+  \right)
+  =
+  \Phi\left(
+    \begin{bmatrix} x \\ y \\ z \\ 0 \\ \phi_2 \end{bmatrix}
+  \right) \text{, } \forall \phi_1 , \phi_2 \in \mathbb{R}
+\end{equation}
+Therefore this map is not injective either.
+
+\subsection{The Jacobian}
+Now that we have established that $\mathbf{\Phi}$ is neither injective nor surjective we must move our attention to thinking about local invertibility rather than global. To do so we define the Jacobian:
+\begin{equation}
+  J(\mathbf{p}) = \frac{\partial \mathbf{\Phi}}{\partial \mathbf{p}} \in \mathbb{R}^{8\times5} \text{, } J_{i,j} = \frac{\partial \Phi_i}{\partial p_i}
+  \label{eq:}
+\end{equation}
+Since $\mathbf{H}$ is a finite sum of Biot Savart applications it is a smooth map away from the current filaments. $\hat{n}$ is also a smooth map, therefore $\Phi$ will also be smooth away from the current filaments and the Jacobian will be well defined there.
+
+A closed form for $\mathbf{J}$ is infesible to find so we instead use finite differences to approximate $\mathbf{J}$
+
+\begin{equation}
+  \mathbf{J_{:,i}} \approx \frac{\mathbf{\Phi}\left(\mathbf{p} + h * \hat{e_i} \right) - \mathbf{\Phi(\mathbf{p})}}{h}
+  \label{eq:}
+\end{equation}
+where $\hat{e}_i$ is the unit vector in the $i$th direction, and $h$ is a small real value ($h = 10^{-5}$ in our simulations).
 \end{document}
