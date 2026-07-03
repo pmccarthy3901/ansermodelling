@@ -34,5 +34,6 @@ rotations = np.array([
     [2,np.pi/2]
 ])
 
-calibration = np.ones(8)
+
+calibration = np.ones(8) # flux calibration factor. Left as ones in placeholder
 

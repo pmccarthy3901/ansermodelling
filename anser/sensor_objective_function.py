@@ -1,5 +1,6 @@
 import numpy as np
 from .field_coil_calc import field_coil_calc
+from .normal_vector import normal_vector 
 
 def sensor_objective_function(
     current_PO : np.ndarray,
@@ -31,10 +32,8 @@ def sensor_objective_function(
     x,y,z,theta,phi = current_PO 
     
 
-    sensor_normal = np.array([np.sin(theta)*np.cos(phi),
-                              np.sin(theta)*np.sin(phi),
-                              np.cos(theta)]) 
-    
+    sensor_normal = normal_vector(current_PO)
+
     h = field_coil_calc(1,coil_position,np.array([x,y,z]))
 
     flux_model = calibration * np.sum(sensor_normal*h, axis=-1)

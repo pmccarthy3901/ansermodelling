@@ -1,5 +1,5 @@
 [project]
-name = "pythoncode"
+name = "ansermodelling"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -18,3 +18,5 @@ dependencies = [
 
 [tool.setuptools.packages.find]
 include = ["anser*"]
+include = ["data*"]
+include = ["models*"]

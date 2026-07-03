@@ -4,11 +4,11 @@ import numpy as np
 def build_dataset(
         N : int = 100000,
         bounds : np.ndarray = np.array([
-            [-0.25,0.25],
+            [-0.125,0.125],
             [-0.25,0.25],
             [0,0.25],
-            [-np.pi,np.pi],
-            [0,np.pi/2]
+            [0,np.pi],
+            [0,2*np.pi]
         ]),
         seed : int = 1
         ) -> tuple:

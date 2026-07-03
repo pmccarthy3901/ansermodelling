@@ -51,9 +51,11 @@ class AnserDataset(Dataset):
 
 
 
-def make_dataloaders(path : string,
+def make_dataloaders(path : str,
                      train_frac : float = 0.8,
-                     batch_size : int = 32):
+                     batch_size : int = 32,
+                     normalise_data : bool = False,
+                     noise_std : float = 0):
 
     '''
         Makes training and testing dataloaders from dataset npz file.
@@ -66,6 +68,16 @@ def make_dataloaders(path : string,
             fraction of data used for training, default = 0.8
         batch_size : int 
             Batch size, default = 32
+
+        normalise_data : bool
+            Choose whether to normalise test data, default = False
+        noise_std : float 
+            standard deviation of noise to be added to inputs. Default = 0
+    
+        Returns 
+        ------- 
+        train_dataloader, test_dataloder 
+            Pytorch dataloaders generated from the data
     '''
     full_dataset = AnserDataset(path)
 
@@ -78,19 +90,28 @@ def make_dataloaders(path : string,
     train_idx = indices[:n_train]
     test_idx = indices[n_train:]
     
+    if normalise_data:
+        x_mean = full_dataset.x[train_idx].mean(dim = 0)
+        x_std = full_dataset.x[train_idx].std(dim = 0)
 
-    x_mean = full_dataset.x[train_idx].mean(dim = 0)
-    x_std = full_dataset.x[train_idx].std(dim = 0)
+        train_ds = AnserDataset(path,x_mean = x_mean, x_std = x_std, noise_std = noise_std)
+        train_ds.x = train_ds.x[train_idx]
+        train_ds.y = train_ds.y[train_idx]
 
-    train_ds = AnserDataset(path,x_mean = x_mean, x_std = x_std)
-    train_ds.x = train_ds.x[train_idx]
-    train_ds.y = train_ds.y[train_idx]
+        test_ds = AnserDataset(path,x_mean = x_mean, x_std = x_std)
+        test_ds.x = test_ds.x[test_idx]
+        test_ds.y = test_ds.y[test_idx]
+    else:
+        train_ds = AnserDataset(path,noise_std = noise_std)
+        train_ds.x = train_ds.x[train_idx]
+        train_ds.y = train_ds.y[train_idx]
 
-    test_ds = AnserDataset(path,x_mean = x_mean, x_std = x_std)
-    test_ds.x = test_ds.x[test_idx]
-    test_ds.y = test_ds.y[test_idx]
+        test_ds = AnserDataset(path)
+        test_ds.x = test_ds.x[test_idx]
+        test_ds.y = test_ds.y[test_idx]
 
-    train_dataloader = DataLoader(train_ds, batch_size = batch_size)
+
+    train_dataloader = DataLoader(train_ds, batch_size = batch_size, shuffle = True)
     test_dataloader = DataLoader(test_ds,batch_size = batch_size)
 
     return train_dataloader, test_dataloader

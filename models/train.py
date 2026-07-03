@@ -67,12 +67,14 @@ def train(model : nn.Module,
             model.eval()
             epoch_test_loss = 0 
             for x,y in test_loader:
+
+                x,y = x.to(device), y.to(device)
                 pred = model(x)
                 epoch_test_loss += loss_fn(pred,y).item()
         
 
-        epoch_train_loss /= len(train_loader.dataset)
-        epoch_test_loss /= len(test_loader.dataset)
+        epoch_train_loss /= len(train_loader)
+        epoch_test_loss /= len(test_loader)
         
         if print_losses:
             print(f"Epoch {epoch}, train loss: {epoch_train_loss:.4f}, test loss: {epoch_test_loss:.4f}")
