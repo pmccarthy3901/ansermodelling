@@ -48,8 +48,9 @@
 }
 
 \begin{document}
-\section{Backward Model}
-Maxwell's equations in free space are linear so the total magnetic field will be the sum of each individual straight line. Our main goal then, is to find the magnetic field generated at an observer point $p$ due to the current flowing along $\vec{a}$.  
+\section{Mathematical Background}
+\section{Magnetic Field Derivation}
+Maxwell's equations in free space are linear \cite[p.~59]{griffiths2013} so the total magnetic field will be the sum of each individual straight line. Our main goal then, is to find the magnetic field generated at an observer point $p$ due to the current flowing along $\vec{a}$.  
 
 We start by defining vectors $\vec{a}$, $\vec{b}$, and $\vec{c}$. 
 \begin{itemize}
@@ -187,17 +188,78 @@ Now, picking out these two parts and simplifying, where $\theta$ is the angle su
                               &= \vec{a} \cdot \vec{b}
 \end{align*}
 This gives us our final form:
-\begin{equation}\label{eq:backwards}
+\begin{equation}\label{eq:biot_savart_final}
   \vec{B} = \frac{\mu_0 I}{4\pi} \frac{\vec{a} \times \vec{c}}{\left \vert \vec{a} \times \vec{c} \right \vert^2 } \left( \frac{\vec{a} \cdot \vec{b}}{b} - \frac{\vec{a} \cdot \vec{c}}{c} \right)
 \end{equation}
 Now, remembering that this equation is linear and that each coil is made up of straight line filaments we get:
 
 \begin{equation}
-  \vec{B}_{\text{coil}} = \sum_{i = 0}^N  
+\vec{B}_{\text{total}} = \sum_{\text{coils}} \sum_{\text{filaments}}  \vec{B}_{\text{filament}} 
+\end{equation}
+Now, since we are in free space we use the identity $\vec{H} = \frac{\vec{B}}{\mu_0}$ \cite[p.~285]{griffiths2013}
+
+\section{Understanding the forward map.}
+The problem is framed as an inverse problem. The forward map takes position and orientation data and calculates 8 flux values from each of the coils. Our goal is to approximate an inverse to this map. To do so, we first try to understand the forward map 
+\subsection{Definition and properties.}
+First we define a pose vector $\mathbf{p} \in \mathbb{R}^5$ \\
+\begin{equation}
+  \mathbf{p} = 
+  \begin{bmatrix}
+    x \\ y \\ z \\ \theta \\ \phi 
+  \end{bmatrix}
 \end{equation}
 
+In actuality, $\mathbf{p}$ is restricted to a set $\Omega \subset \mathbb{R}^5$
 
+\begin{equation}
+  \Omega = \left\{
+  \begin{bmatrix} x \\ y \\ z \\ \theta \\ \phi \end{bmatrix} \in \mathbb{R}^5 : 
+  \begin{matrix} x \in (-0.125,0.125) \\ y \in (-0.125,0.125) \\ z \in (0,0.25) \\ \theta \in (0,\pi) \\ \phi \in [0,2\pi) \end{matrix}
+  \right\}
+\end{equation}
 
+Then we define a vector of fluxes, $\mathbf{\Phi} \in \mathbb{R}^8$
+\begin{equation}
+  \mathbf{\Phi} = 
+  \begin{bmatrix}
+    \Phi_1 \\ \Phi_2 \\ \Phi_3 \\ \Phi_4 \\ \Phi_5 \\ \Phi_6 \\ \Phi_7 \\ \Phi_8 
+  \end{bmatrix}
+\end{equation}
 
+Now we can write the forward map: $\mathbf{\Phi}(\mathbf{p}): \Omega \subset \mathbb{R}^5 \rightarrow \mathbb{R}^8$. More precisely,
+\begin{equation}
+  \Phi_i = \mathbf{H}_i(x,y,z) \cdot \hat{n}(\theta,\phi) 
+\end{equation}
+where $\mathbf{H}_i$ is the magnetic field calculated at $(x,y,z)$ due to coil $i$ using eqaution \eqref{eq:biot_savart_final}, and $\hat{n}(\theta,\phi)$ is the vector normal to the sensor, defined by: 
 
+\begin{equation}
+  \hat{n}(\theta,\phi) = 
+  \begin{bmatrix}
+    \sin\theta\cos\phi \\ \sin\theta\sin\phi \\ \cos\theta
+  \end{bmatrix}
+\end{equation}
+
+Since this maps from a subset of $\mathbb{R}^5$ to $\mathbb{R}^8$ it is clear that the forward map is not surjective.
+
+\subsection{The Jacobian}
+Now that we have established that $\mathbf{\Phi}$ is not surjective we must move our attention to thinking about local invertibility rather than global. To do so we define the Jacobian:
+\begin{equation}
+  J(\mathbf{p}) = \frac{\partial \mathbf{\Phi}}{\partial \mathbf{p}} \in \mathbb{R}^{8\times5} \text{, } J_{i,j} = \frac{\partial \Phi_i}{\partial p_j}
+  \label{eq:}
+\end{equation}
+Since $\mathbf{H}$ is a finite sum of Biot Savart applications it is a smooth map away from the current filaments. $\hat{n}$ is also a smooth map, therefore $\Phi$ will also be smooth away from the current filaments and the Jacobian will be well defined there.
+
+A closed form for $\mathbf{J}$ is cumbersome find so we instead use finite differences to approximate $\mathbf{J}$
+
+\begin{equation}
+  \mathbf{J_{:,i}} \approx \frac{\mathbf{\Phi}\left(\mathbf{p} + h * \hat{e_i} \right) - \mathbf{\Phi(\mathbf{p})}}{h}
+  \label{eq:}
+\end{equation}
+where $\hat{e}_i$ is the unit vector in the $i$th direction, and $h$ is a small real value ($h = 10^{-5}$ in our simulations).
+
+\subsection{Local Invertibility}
+
+As a result of the inverse function theorem \cite[Thm 9.24]{rudin1976}; where $\mathbf{J}(\mathbf{p})$ has full column rank, or equivalently, where $\mathbf{J}^\top \mathbf{J}$ is invertible $\mathbf{\Phi}$ is locally injective and has a $C^1$ local inverse in a neighbourhood of $\mathbf{\Phi(\mathbf{p})}$.
+
+Rank deficiency therefore signals regions where the pose cannot be recovered from the flux, even locally. Full column rnak is therefore a condition for the inverse problem to be well posed.
 \end{document}
