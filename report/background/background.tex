@@ -262,4 +262,16 @@ where $\hat{e}_i$ is the unit vector in the $i$th direction, and $h$ is a small 
 As a result of the inverse function theorem \cite[Thm 9.24]{rudin1976}; where $\mathbf{J}(\mathbf{p})$ has full column rank, or equivalently, where $\mathbf{J}^\top \mathbf{J}$ is invertible $\mathbf{\Phi}$ is locally injective and has a $C^1$ local inverse in a neighbourhood of $\mathbf{\Phi(\mathbf{p})}$.
 
 Rank deficiency therefore signals regions where the pose cannot be recovered from the flux, even locally. Full column rnak is therefore a condition for the inverse problem to be well posed.
+
+\section{Iterative Methods}
+Given a function $f : \mathbb{R}^N \rightarrow \mathbb{R}^M$ with $m \geq n$, and a given $y \in \mathbb{R}^M$ suppose we want to find an $x \in \mathbb{R}^N$ that satisfies $y = f(x)$. In the case $m = n$ we might get bijectivity which would allow us to simply invert the map, however, in our case we have $n = 5$ and $m = 8$ so we cannot. In this case we have to use the inverse function theorem to get a local inverse. This leads us to iterative methods.
+
+\subsection{Gauss Newton}
+The Gauss-Newton Algorithm solves this exact kind of problem. Let's break it down. 
+
+We have a function $f : \mathbb{R}^n \rightarrow \mathbb{R}^m$ and we know $y \in \mathbb{R}^m$, we want to find $x \in \mathbb{R}^n$ such that $y = f(x)$. We start with an initial guess $x_0 \in \mathbb{R}^n$ and define a residual:
+\begin{equation}
+  r_0 = y - f(x_0)
+\end{equation}
+Ideally, we would find an $x$ that would minimise $r$ 
 \end{document}
