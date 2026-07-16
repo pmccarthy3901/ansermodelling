@@ -61,7 +61,7 @@
 
 \begin{document}
 \section{The Anser System}
-Anser EMT \cite{jaeger2017} is the first fully open-source electromagnetic tracking platform for image-guided interventions. It uses magnetic fields to work out the position and orientation of a sensor embedded in the field. It has two main components: a planar field generator, and a tracking sensor coil. 
+Anser EMT \cite{jaeger2017} is the first fully open-source electromagnetic tracking platform for image-guided interventions. It uses magnetic fields to determine the position and orientation of a sensor embedded in the field. It has two main components: a planar field generator, and a tracking sensor coil. 
 
 \subsection{The Field Generator}
 The Anser EMT system uses a planar field generator consisting of 8 coils being driven at different frequencies. Each coil consists of a wound rectangular spiraling filament with specifications shown in table \ref{tab:coil_spec}.
@@ -83,14 +83,14 @@ The Anser EMT system uses a planar field generator consisting of 8 coils being d
   \label{tab:coil_spec}
 \end{table}
 \missingfig{FIGURE OF SINGLE COIL}
-8 of these coils are positioned on the PCB, as seen in Figure \ref{fig:field_coils}
+Eight of these coils are positioned on the PCB, as seen in Figure \ref{fig:field_coils}
 \missingfig{Figure of 8 coil generator}
 
 \subsection{The Tracking Sensor Coil}
-The tracking sensor records the flux, and due to the emitter coils running at different frequenies, is able to recover the 8 flux values due to each of the emitter coils after demodulation. These 8 fluxes are fed into the pose solving algorithm to determine the position and orientation of the sensor.
+The tracking sensor records the flux, and due to the emitter coils running at different frequencies, is able to recover the 8 flux values due to each of the emitter coils after demodulation. These 8 fluxes are fed into the pose solving algorithm to determine the position and orientation of the sensor.
 
 \section{Magnetic Field Derivation}
-Maxwell's equations in free space are linear \cite[p.~59]{griffiths2013} so the total magnetic field will be the sum of each individual straight line. Our main goal then, is to find the magnetic field generated at an observer point $p$ due to the current flowing along $\mathbf{a}$.  
+Each spiral coil is composed of a sequence of straight line filaments and Maxwell's equations in free space are linear \cite[p.~59]{griffiths2013} so the total magnetic field will be the sum of the fields of each individual straight line filament. Our main goal then, is to find the magnetic field generated at an observer point $p$ due to the current flowing along one of these straight line filaments, $\mathbf{a}$.  
 
 We start by defining vectors $\mathbf{a}$, $\mathbf{b}$, and $\mathbf{c}$. 
 \begin{itemize}
@@ -104,10 +104,10 @@ Note that throughout I use the convention $\left \vert \mathbf{a} \right \vert =
 Now, we use the Biot Savart Law to find the magnetic field in each of the lines. 
 
 \begin{equation}
-  \mathbf{B} = \frac{\mu_0 I}{4\pi} \int \frac{d{l}\times \mathbf{r}}{r^3}  
+  \mathbf{B} = \frac{\mu_0 I}{4\pi} \int \frac{d\mathbf{l}\times \mathbf{r}}{r^3}  
 \end{equation}
 
-To work out this integral we first parametrise $\mathbf{r}$ in a parameter $t$, yielding:
+To evaluate this integral we first parametrise $\mathbf{r}$ in a parameter $t$, yielding:
 \begin{align*}
   \mathbf{r}(t) &= \mathbf{c} - \mathbf{a}t \text{, } t \in [0,1] \\
   d\mathbf{l} &= \mathbf{a}dt
@@ -150,7 +150,7 @@ Subbing back into our Biot Savart Formula gives:
   \mathbf{B} = \frac{\mu_0 I}{4\pi} \frac{\mathbf{a} \times \mathbf{c}}{a^3} \int_{\frac{\beta}{a^2}}^{1+\frac{\beta}{a^2}} \frac{du}{\left(u^2 + \delta\right)^{3/2}}
 \end{equation}
 
-Want to use the identity $\sec^2\phi = 1 + \tan^2\phi$, to do so, multiply across by a factor of $\delta^{3/2}$
+We want to use the identity $\sec^2\phi = 1 + \tan^2\phi$, to do so, factor out $\delta^{3/2}$
 
 \begin{equation}
   \mathbf{B} = \frac{\mu_0 I}{4\pi} \frac{\mathbf{a} \times \mathbf{c}}{a^3\delta^{3/2}} \int_{\frac{\beta}{a^2}}^{1+\frac{\beta}{a^2}} \frac{du}{\left(\frac{u^2}{\delta} + 1 \right)^{3/2}}
@@ -192,7 +192,7 @@ Recalling $\delta = \frac{c^2}{a^2} - \frac{\beta^2}{a^4}$, $\beta = -\mathbf{a}
   \sqrt{\delta + \left( 1 + \frac{\beta}{a^2} \right)^2} &= \sqrt{\frac{c^2}{a^2} - \frac{\beta^2}{a^4} + 1 + 2\frac{\beta}{a^2} + \frac{\beta^2}{a^4}} \\
                              &= \sqrt{1 + \frac{c^2}{a^2} - \frac{2}{a^2} \left(\mathbf{a} \cdot \mathbf{c} \right)} \\
                              &= \frac{1}{a} \sqrt{a^2 + c^2 - 2\left(\mathbf{a} \cdot \mathbf{c}\right)} \\
-                             &= \frac{1}{a} \left \vert {a} - {c} \right \vert \\
+                             &= \frac{1}{a} \left \vert \mathbf{a} - \mathbf{c} \right \vert \\
                              &= \frac{b}{a}
 \end{align*}
 
@@ -234,9 +234,9 @@ This gives us our final form:
 Now, remembering that this equation is linear and that each coil is made up of straight line filaments we get:
 
 \begin{equation}
-\mathbf{B}_{\text{total}} = \sum_{\text{coils}} \sum_{\text{filaments}}  {B}_{\text{filament}} 
+\mathbf{B}_{\text{total}} = \sum_{\text{coils}} \sum_{\text{filaments}}  \mathbf{B}_{\text{filament}} 
 \end{equation}
-Now, since we are in free space we use the identity $\mathbf{H} = \frac{{B}}{\mu_0}$ \cite[p.~285]{griffiths2013}
+Now, since we are in free space we use the identity $\mathbf{H} = \frac{\mathbf{B}}{\mu_0}$ \cite[p.~285]{griffiths2013}
 
 \section{Understanding the forward map.}
 The problem is framed as an inverse problem. The forward map takes position and orientation data and calculates 8 flux values from each of the coils. Our goal is to approximate an inverse to this map. To do so, we first try to understand the forward map 
@@ -254,7 +254,7 @@ In actuality, $\mathbf{p}$ is restricted to a set $\Omega \subset \mathbb{R}^5$
 \begin{equation}
   \Omega = \left\{
   \begin{bmatrix} x \\ y \\ z \\ \theta \\ \phi \end{bmatrix} \in \mathbb{R}^5 : 
-  \begin{matrix} x \in (-0.125,0.125) \\ y \in (-0.125,0.125) \\ z \in (0,0.25) \\ \theta \in (0,\pi) \\ \phi \in [0,2\pi) \end{matrix}
+  \begin{matrix} x \in (-0.125\text{ m},0.125\text{ m}) \\ y \in (-0.125\text{ m},0.125\text{ m}) \\ z \in (0\text{ m},0.25\text{ m}) \\ \theta \in (0\text{ rad},\pi\text{ rad}) \\ \phi \in [0\text{ rad},2\pi\text{ rad}) \end{matrix}
   \right\}
 \end{equation}
 
@@ -278,8 +278,7 @@ where $\mathbf{H}_i$ is the magnetic field calculated at $(x,y,z)$ due to coil $
     \sin\theta\cos\phi \\ \sin\theta\sin\phi \\ \cos\theta
   \end{bmatrix}
 \end{equation}
-
-Since this maps from a subset of $\mathbb{R}^5$ to $\mathbb{R}^8$ the image of a 5-dimesional domain cannot fill $\mathbb{R}^8$, and cannot be surjective.
+Since $\Phi$ is smooth, the image of the 5-dimensional domain, $\Omega$, has mesaure zero in $\mathbb{R}^8$, therefore $\Phi$ cannot be surjective.
 
 \subsection{The Jacobian}
 Now that we have established that $\mathbf{\Phi}$ is not surjective we must move our attention to thinking about local invertibility rather than global. To do so we define the Jacobian:
@@ -288,10 +287,10 @@ Now that we have established that $\mathbf{\Phi}$ is not surjective we must move
 \end{definition}
 Since $\mathbf{H}$ is a finite sum of Biot Savart applications it is a smooth map away from the current filaments. $\hat{n}$ is also a smooth map, therefore $\Phi$ will also be smooth away from the current filaments and the Jacobian will be well defined there.
 
-A closed form for $\mathbf{J}$ is cumbersome find so we instead use finite differences to approximate $\mathbf{J}$
+A closed form for $\mathbf{J}$ is cumbersome to find so we instead use finite differences to approximate $\mathbf{J}$
 
 \begin{equation}
-  \mathbf{J_{:,i}} \approx \frac{\mathbf{\Phi}\left(\mathbf{p} + h * \hat{e_i} \right) - \mathbf{\Phi(\mathbf{p})}}{h}
+  \mathbf{J_{:,i}} \approx \frac{\mathbf{\Phi}\left(\mathbf{p} + h  \hat{e_i} \right) - \mathbf{\Phi(\mathbf{p})}}{h}
 \end{equation}
 where $\hat{e}_i$ is the unit vector in the $i$th direction, and $h$ is a small real value ($h = 10^{-5}$ in our simulations).
 
@@ -318,10 +317,10 @@ This means that the pose is unique in a neighbourhood of $\mathbf{p}_0$, distinc
 Rank deficiency therefore signals regions where the pose cannot be recovered from the flux, even locally. Full column rank is therefore a condition for the inverse problem to be well posed.
 
 \section{Iterative Methods}
-Given a function $f : \mathbb{R}^N \rightarrow \mathbb{R}^M$ with $m \geq n$, and a given $y \in \mathbb{R}^M$ suppose we want to find an $x \in \mathbb{R}^N$ that satisfies $y = f(x)$. In the case $m = n$ we might get bijectivity which would allow us to simply invert the map, however, in our case we have $n = 5$ and $m = 8$ so we cannot. In this case we have to use the inverse function theorem to get a local inverse. This leads us to iterative methods.
+Given a function $f : \mathbb{R}^N \rightarrow \mathbb{R}^M$ with $M \geq N$, and a given $y \in \mathbb{R}^M$ suppose we want to find an $x \in \mathbb{R}^N$ that satisfies $y = f(x)$. In the case $m = n$ we could get bijectivity which would allow us to simply invert the map, however, in our case we have $n = 5$ and $m = 8$ so we cannot. In this case we have to use the rank theorem to get a local inverse. This leads us to iterative methods.
 
 \subsection{Gauss Newton}
-The Gauss-Newton Algorithm solves this exact kind of problem. Let's break it down. 
+The Gauss-Newton Algorithm solves this exact kind of problem. 
 
 We have a function $f : \mathbb{R}^n \rightarrow \mathbb{R}^m$ and we know $y \in \mathbb{R}^m$, we want to find $x_{\text{true}} \in \mathbb{R}^n$ such that $y = f(x_{\text{true}})$. We start with an initial guess $x_0 \in \mathbb{R}^n$ and define a residual:
 \begin{equation}
@@ -332,9 +331,9 @@ Then we define a cost function:
   F(x) = \frac{1}{2} \left \Vert r(x) \right \Vert^2 = \frac{1}{2} r(x)^{\top}r(x)
   \label{eq:cost_function}
 \end{equation}
-Suppose now we take a step, $\delta \in \mathbb{R}^5$, we want to find the $\delta$ which minimises the cost function.
+Suppose now we take a step, $\delta \in \mathbb{R}^N$, we want to find the $\delta$ which minimises the cost function.
 \begin{equation}
-  F(x + \delta) = \frac{1}{2} \left\Vert r(x + \delta) \right\Vert^2  = \frac{1}{2} \left(r(x) + J(x)\delta \right)^\top \left(r(x) + J(x) \delta \right)
+  F(x + \delta) = \frac{1}{2} \left\Vert r(x + \delta) \right\Vert^2 
 \end{equation}
 Now, linearising:
 \begin{equation}
@@ -377,7 +376,7 @@ Using the same argument as before, taking the $k$th component of this gradient:
   \left(\nabla_x F(x)\right)_k &= \frac{1}{2} \frac{\partial}{\partial x_k} \sum_{j = 1}^{m} r_j(x) r_j(x) \\
                 &= \frac{1}{2} \sum_{j = 1}^{m} \frac{\partial}{\partial x_k} r_j(x)^2 \\
                 &= \frac{1}{2} \sum_{j = 1}^m 2r_j(x) \frac{\partial r_j(x)}{\partial x_k} \\
-                &= \sum_{j = 1}^m r_j(x) \frac{\partial (f_j(x) - y_j}{\partial x_k} \\
+                &= \sum_{j = 1}^m r_j(x) \frac{\partial (f_j(x) - y_j)}{\partial x_k} \\
                 &= \sum_{j = 1}^m r_j(x) \frac{\partial f_j(x)}{\partial x_k} \\
                 &= \sum_{j=1}^m r_j(x) J_{jk}(x) \\
                 &= \left(J^\top(x) r(x)\right)_k
@@ -392,14 +391,14 @@ Because $-\nabla_x F$ is in the direction of steepest local decrease, a sufficie
 In 1944, Levenberg \cite{levenberg1944} interpolated between these two algorithms. If we denote each step as $\delta_{GN}$ and $\delta_{GD}$, for Gauss Newton and gradient descent, respectively we get that each of these steps solve the equations:
 \begin{align}
   (J^\top J) \delta_{GN} &= - J^\top r \\
-  \delta_{GD} &= -\eta J^T r
+  \delta_{GD} &= -\eta J^\top r
 \end{align}
-Now, letting $\lambda = \frac{1}{\eta}$, multiplying by $I \in R^{n \times n}$, and interpolating between these two yields:
+Now, letting $\lambda = \frac{1}{\eta}$, multiplying by $I \in \mathbb{R}^{n \times n}$, and interpolating between these two yields:
 \begin{equation}
   \label{eq:levenberg}
   \left(J^\top J + \lambda I \right)\delta = -J^\top r
 \end{equation}
-Here, $\lambda$ is known as the damping factor, and another key insight Levenberg had was to vary lambda dynamically. Since GN works better the closer to the solution we get and GD works better the further from the solution we are, the damping varied.\\
+Here, $\lambda$ is known as the damping factor, and another key insight Levenberg had was to vary lambda dynamically. Since GN works better the closer to the solution we get and GD works better the further from the solution we are, the damping is varied dynamically.\\
 We start at step $i$ with $\lambda = \lambda_i$. If $F(x_{i+1}) < F(x_i)$ we are moving in the right direction so can move more into the GN regime, setting $\lambda_{i+1} = 0.1\lambda_i$. However, if $F(x_{i+1}) \geq F(x_{i})$ then it is clear that GN is not working and we need to move into a GD dominated regime, thus setting $\lambda_{i+1} = 10\lambda_{i}$. This ensures that when we are far from the solution we are in a GD dominated regime and as we get closer to the solution GN starts to take over.
 
 \subsection{The Levenberg Marquardt Algorithm} 
@@ -417,7 +416,7 @@ Both Gauss-Newton and Levenberg-Marquardt are local methods, they converge to a 
 The iterative methods above invert the forward map each time for every measurement. An alternative would be to spend the computation time upfront and approximate a full inverse map once.
 
 \subsection{Feed Forward Neural Network}
-We use a fully-connected feed forward neural network (FFNN) to approximate the inverse. Suppose we have a function $\Phi: \mathbb{R}^N \rightarrow \mathbb{R}^M$ and we would like to approximate its inverse $f:= \Phi^{-1}$. We would like to find $y \in \mathbb{R}^N$ such that $y = f(x), x \in \mathbb{R}^M$. To do so, a FFNN with $L$ hidden layers performs the following composition, with $o_0 = x$ and $o_L = \hat{y}$:
+We use a fully-connected feed forward neural network (FFNN) to approximate the inverse. Suppose we have a function $\Phi: \mathbb{R}^N \rightarrow \mathbb{R}^M$ an approximate inverse is defined on the image of $\Phi$, which we call $f$. We would like to find $y \in \mathbb{R}^N$ such that $y = f(x), x \in \mathbb{R}^M$. To do so, a FFNN with $L$ hidden layers performs the following composition, with $o_0 = x$ and $o_L = \hat{y}$:
 
 \begin{equation}
   \label{eq:FFNN}
@@ -430,7 +429,7 @@ We represent this approximation as $\hat{f}_w: \mathbb{R}^M \rightarrow \mathbb{
 The question then becomes how do we find the collection of parameters, $w$, which does this?
 
 \subsection{Training a FFNN}
-Because we possess $\Phi$ we can generate unlimited training data, a collection of labeled pairs, $(x_i,y_i)$. The goal of training is then to minimise the residual, or \emph{loss function} with respect to the parameters, $w$:
+Because we possess $\Phi$ we can generate unlimited training data, a collection of labeled pairs, $(x_i,y_i)$. The goal of training is then to minimise the \emph{loss function} with respect to the parameters, $w$:
 \begin{definition}[Loss Function]
   \label{def:loss}
   $$\hat{L}(w) = \frac{1}{N} \sum_{i = 1}^N \left \Vert \hat{f}_w(x_i) - y_i \right \Vert ^2$$
