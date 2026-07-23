@@ -26,7 +26,7 @@
 \definecolor{codeblue}{rgb}{0.0,0.39,0.75}
 \definecolor{codeback}{rgb}{0.97,0.97,0.97}
 \newcommand{\missingfig}[1]{%
-  \begin{figure}[H]
+  \begin{figure}
     \centering
     \fbox{\parbox[c][3cm][c]{0.6\linewidth}{\centering
       \textbf{\color{red}[MISSING FIGURE]}\\[4pt] #1}}
@@ -60,13 +60,19 @@
 \newtheorem{definition}{Definition}[section]
 
 \begin{document}
+The Anser electromagnetic tracking (EMT) system infers the position and orientation (pose) of a small sensor coil from eight measurements induced by a planar array of emitter coils. This is an inverse problem: the physics maps from pose to measurement, but the system must run this map backwards, recovering five pose coordinates from eight measured values. 
+
+This chapter builds the machinery needed to both understand and solve the problem. We first describe the physical system, then derive a forward map from the underlying physics. We then look at the characteristics of this map and ask when it can be inverted, at least locally, and turn to methods that can do this in practice.
+
+The first class of methods we look at are the iterative methods, whose success depends on where they start. The second class are neural networks (NNs), which learn an approximate inverse directly. The chapter closes by introducing a hybrid approach, which combines the strengths of both.
+
 \section{The Anser System}
-Anser EMT \cite{jaeger2017} is the first fully open-source electromagnetic tracking platform for image-guided interventions. It uses magnetic fields to determine the position and orientation of a sensor embedded in the field. It has two main components: a planar field generator, and a tracking sensor coil. 
+Anser EMT \cite{jaeger2017} is the first fully open-source electromagnetic tracking (EMT) platform for image-guided interventions. It uses magnetic fields to determine the position and orientation of a sensor embedded in the field. It has two main components: a planar field generator, and a tracking sensor coil. 
 
 \subsection{The Field Generator}
 The Anser EMT system uses a planar field generator consisting of 8 coils being driven at different frequencies. Each coil consists of a wound rectangular spiraling filament with specifications shown in table \ref{tab:coil_spec}.
 
-\begin{table}[H]
+\begin{table}
   \centering
   \begin{tabular}{ll}
     \toprule 
