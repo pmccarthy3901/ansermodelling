@@ -20,7 +20,7 @@ class FFNN(nn.Module):
 
     def __init__(self,
                  input_dim : int = 8,
-                 output_dim : int = 5,
+                 output_dim : int = 6,
                  hidden_dims : list[int] = [64],
                  dropout : float = 0.0):
         

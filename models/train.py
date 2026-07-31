@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-
+import numpy as np
 
 def train(model : nn.Module,
           train_loader,
@@ -46,10 +46,13 @@ def train(model : nn.Module,
     test_losses = []
 
     model = model.to(device)
-
-
+    
+    if print_losses:
+        print(f"epoch \t Training Loss \t Test Loss \t Mean pos error train \t Mean Pos Error Test")
+        
     for epoch in range(epochs):
         epoch_train_loss = 0
+        epoch_train_pos_loss = 0
         model.train()
         for x, y in train_loader:
 
@@ -61,23 +64,26 @@ def train(model : nn.Module,
             loss.backward()
             optimizer.step()
             epoch_train_loss += loss.item()
-        
+            epoch_train_pos_loss += (y[:, :3] - pred[:, :3]).norm(dim=1).mean().item() 
                 
         with torch.no_grad():
             model.eval()
             epoch_test_loss = 0 
+            epoch_test_pos_loss = 0
             for x,y in test_loader:
 
                 x,y = x.to(device), y.to(device)
                 pred = model(x)
                 epoch_test_loss += loss_fn(pred,y).item()
-        
+                epoch_test_pos_loss += (y[:, :3] - pred[:, :3]).norm(dim=1).mean().item()
 
         epoch_train_loss /= len(train_loader)
+        epoch_train_pos_loss /= len(train_loader)
         epoch_test_loss /= len(test_loader)
+        epoch_test_pos_loss /= len(test_loader)
         
         if print_losses:
-            print(f"Epoch {epoch}, train loss: {epoch_train_loss:.4f}, test loss: {epoch_test_loss:.4f}")
+            print(f"{epoch + 1} \t {epoch_train_loss:.4f} \t  {epoch_test_loss:.4f} \t {epoch_train_pos_loss:.4f} \t {epoch_test_pos_loss:.4f}")
 
         train_losses.append(epoch_train_loss)
         test_losses.append(epoch_test_loss)
