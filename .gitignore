@@ -20,4 +20,10 @@ __pycache__/
 *.log
 *.out
 *.synctex.gz
-data/dataset.npz
+*.bbl 
+*.blg 
+*.lof 
+*.toc 
+
+#Datasets 
+*.npz

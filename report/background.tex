@@ -1,65 +1,4 @@
-\documentclass[12pt,a4paper]{report}
-
-\setcounter{secnumdepth}{3} %The level of sections that get numbered
-\setcounter{tocdepth}{3} %The level of sections to appear in ToC
-\usepackage{url}
-\usepackage{graphicx}
-\usepackage{float}
-\usepackage{subcaption}
-\usepackage{braket}
-\usepackage{calligra}
-\usepackage{listings}
-\usepackage{hyperref}
-\usepackage{graphicx} % Required for inserting images
-\usepackage{amssymb}
-\usepackage{amsmath}
-\usepackage{amsthm}
-\usepackage{xcolor}
-\usepackage{aurical}
-\usepackage[T1]{fontenc}
-\usepackage{booktabs}
-
-
-\definecolor{codegreen}{rgb}{0.133,0.545,0.133}
-\definecolor{codegray}{rgb}{0.5,0.5,0.5}
-\definecolor{codepurple}{rgb}{0.58,0,0.827}
-\definecolor{codeblue}{rgb}{0.0,0.39,0.75}
-\definecolor{codeback}{rgb}{0.97,0.97,0.97}
-\newcommand{\missingfig}[1]{%
-  \begin{figure}
-    \centering
-    \fbox{\parbox[c][3cm][c]{0.6\linewidth}{\centering
-      \textbf{\color{red}[MISSING FIGURE]}\\[4pt] #1}}
-    \caption{#1}
-  \end{figure}%
-}
-\lstdefinestyle{python}{
-  language=Python,
-  backgroundcolor=\color{codeback},
-  commentstyle=\color{codegreen},
-  keywordstyle=\color{codeblue}\bfseries,
-  stringstyle=\color{codepurple},
-  numberstyle=\tiny\color{codegray},
-  basicstyle=\ttfamily\small,
-  breakatwhitespace=false,
-  breaklines=true,
-  keepspaces=true,
-  numbers=left,
-  numbersep=5pt,
-  showspaces=false,
-  showstringspaces=false,
-  showtabs=false,
-  tabsize=4,
-  xleftmargin=0pt,
-  xrightmargin=0pt,
-  framesep=4pt,
-  frame=single,
-  rulecolor=\color{codegray},
-}
-\theoremstyle{definition}
-\newtheorem{definition}{Definition}[section]
-
-\begin{document}
+\chapter{Theoretical Background}
 The Anser electromagnetic tracking (EMT) system infers the position and orientation (pose) of a small sensor coil from eight measurements induced by a planar array of emitter coils. This is an inverse problem: the physics maps from pose to measurement, but the system must run this map backwards, recovering five pose coordinates from eight measured values. 
 
 This chapter builds the machinery needed to both understand and solve the problem. We first describe the physical system, then derive a forward map from the underlying physics. We then look at the characteristics of this map and ask when it can be inverted, at least locally, and turn to methods that can do this in practice.
@@ -260,7 +199,7 @@ In actuality, $\mathbf{p}$ is restricted to a set $\Omega \subset \mathbb{R}^5$
 \begin{equation}
   \Omega = \left\{
   \begin{bmatrix} x \\ y \\ z \\ \theta \\ \phi \end{bmatrix} \in \mathbb{R}^5 : 
-  \begin{matrix} x \in (-0.125\text{ m},0.125\text{ m}) \\ y \in (-0.125\text{ m},0.125\text{ m}) \\ z \in (0\text{ m},0.25\text{ m}) \\ \theta \in (0\text{ rad},\pi\text{ rad}) \\ \phi \in [0\text{ rad},2\pi\text{ rad}) \end{matrix}
+  \begin{matrix} x \in (-0.125\text{ m},0.125\text{ m}) \\ y \in (-0.125\text{ m},0.125\text{ m}) \\ z \in (0.001 \text{ m},0.25\text{ m}) \\ \theta \in (0\text{ rad},\pi\text{ rad}) \\ \phi \in [0\text{ rad},2\pi\text{ rad}) \end{matrix}
   \right\}
 \end{equation}
 
@@ -298,7 +237,7 @@ A closed form for $\mathbf{J}$ is cumbersome to find so we instead use finite di
 \begin{equation}
   \mathbf{J_{:,i}} \approx \frac{\mathbf{\Phi}\left(\mathbf{p} + h  \hat{e_i} \right) - \mathbf{\Phi(\mathbf{p})}}{h}
 \end{equation}
-where $\hat{e}_i$ is the unit vector in the $i$th direction, and $h$ is a small real value ($h = 10^{-5}$ in our simulations).
+where $\hat{e}_i$ is the unit vector in the $i$th direction, and $h$ is a small real value.
 
 \subsection{Local Invertibility}
 The forward map maps $\Omega \subset \mathbb{R}^5$ to $\mathbb{R}^8$, so it is never globally invertible. This raises the question: when, if ever, is the forward map locally invertible. 
@@ -393,7 +332,7 @@ Gradient descent then steps against this gradient, with the step-size being deno
 \end{equation}
 Because $-\nabla_x F$ is in the direction of steepest local decrease, a sufficiently small $\eta$ is guaranteed to reduce the cost, so the method is robust far from the solution where Gauss-Newton diverges. Its failure mode is also the opposite of Gauss-Newton's. Near the solution, the gradient becomes small, and since the algorithm has no knowledge of the distance to the solution it bounces back and forth around the minimum.
 
-\subsection{Levenberg's Contribution}
+\subsection{Levenberg's Contribution}\label{sec:background-lm}
 In 1944, Levenberg \cite{levenberg1944} interpolated between these two algorithms. If we denote each step as $\delta_{GN}$ and $\delta_{GD}$, for Gauss Newton and gradient descent, respectively we get that each of these steps solve the equations:
 \begin{align}
   (J^\top J) \delta_{GN} &= - J^\top r \\
@@ -408,7 +347,7 @@ Here, $\lambda$ is known as the damping factor, and another key insight Levenber
 We start at step $i$ with $\lambda = \lambda_i$. If $F(x_{i+1}) < F(x_i)$ we are moving in the right direction so can move more into the GN regime, setting $\lambda_{i+1} = 0.1\lambda_i$. However, if $F(x_{i+1}) \geq F(x_{i})$ then it is clear that GN is not working and we need to move into a GD dominated regime, thus setting $\lambda_{i+1} = 10\lambda_{i}$. This ensures that when we are far from the solution we are in a GD dominated regime and as we get closer to the solution GN starts to take over.
 
 \subsection{The Levenberg Marquardt Algorithm} 
-One downfall of Levenberg's approach is that $\lambda$ is the same in every dimension, even though the dimensions may operate on different scales. Marquardt \cite{marquardt1963} solves this by replacing the identity matrix, $I$ with  $D = \text{diag}\left(J^\top J\right)$ to scale the weights. The Levenberg-Marquardt algorithm solves the following equation at every iteration:
+One downfall of Levenberg's approach is that $\lambda$ is the same in every dimension, even though the dimensions may operate on different scales. Marquardt \cite{marquardt1963} solves this by replacing the identity matrix, $I$ with  $D = \operatorname{Diag}\left(J^\top J\right)$ to scale the weights, where $\operatorname{Diag}$ is the operator which acts on matrices by setting the off-diagnonal elements to zero and operates on vectors by making a diagonal matrix out of its components. The Levenberg-Marquardt algorithm solves the following equation at every iteration:
 \begin{equation}
   \label{eq:lm}
   \left(J^{\top}J + \lambda D \right)\delta = -J^{\top} r 
@@ -440,5 +379,4 @@ Because we possess $\Phi$ we can generate unlimited training data, a collection 
   \label{def:loss}
   $$\hat{L}(w) = \frac{1}{N} \sum_{i = 1}^N \left \Vert \hat{f}_w(x_i) - y_i \right \Vert ^2$$
 \end{definition}
-We minimise the loss using an optimiser, in our case the Adam optimiser \cite{kingma2015}. Generalisation is then assessed on a held-out test set never seen during training.
-\end{document}
+We minimise the loss using an optimiser, in our case the Adam optimiser \cite{kingma2017}. Generalisation is then assessed on a held-out test set never seen during training.

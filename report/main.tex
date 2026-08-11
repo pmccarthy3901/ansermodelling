@@ -1,0 +1,136 @@
+\documentclass[12pt,a4paper]{report}
+
+\setcounter{secnumdepth}{3} %The level of sections that get numbered
+\setcounter{tocdepth}{3} %The level of sections to appear in ToC
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{braket}
+\usepackage{calligra}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{aurical}
+\usepackage[T1]{fontenc}
+\usepackage{booktabs}
+
+%Date formatting Package
+\usepackage[ddmmyyyy]{datetime}
+
+\usepackage{wrapfig}
+
+\definecolor{codegreen}{rgb}{0.133,0.545,0.133}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.827}
+\definecolor{codeblue}{rgb}{0.0,0.39,0.75}
+\definecolor{codeback}{rgb}{0.97,0.97,0.97}
+\lstdefinestyle{python}{
+  language=Python,
+  backgroundcolor=\color{codeback},
+  commentstyle=\color{codegreen},
+  keywordstyle=\color{codeblue}\bfseries,
+  stringstyle=\color{codepurple},
+  numberstyle=\tiny\color{codegray},
+  basicstyle=\ttfamily\small,
+  breakatwhitespace=false,
+  breaklines=true,
+  keepspaces=true,
+  numbers=left,
+  numbersep=5pt,
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  tabsize=4,
+  xleftmargin=0pt,
+  xrightmargin=0pt,
+  framesep=4pt,
+  frame=single,
+  rulecolor=\color{codegray},
+}
+\newcommand{\missingfig}[1]{%
+  \begin{figure}
+    \centering
+    \fbox{\parbox[c][3cm][c]{0.6\linewidth}{\centering
+      \textbf{\color{red}[MISSING FIGURE]}\\[4pt] #1}}
+    \caption{#1}
+  \end{figure}%
+}
+
+\newtheorem{definition}{Definition}[section]
+
+\begin{document}
+\begin{titlepage} \vspace{1cm}
+
+\begin{center}
+\textbf{\Huge Title}
+\end{center}
+
+\vspace{1.0cm}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale = 0.7]{figs/UCC_logo} 
+\end{figure}
+
+\vspace{1.0cm}
+
+\begin{center}
+\textbf{\Large Author:} \Large{Name} {\LARGE\par}
+\textbf{\Large Supervisor:} \Large{Name} {\LARGE\par}
+\end{center}
+\vspace{1.0cm}
+
+\begin{center}
+\Large
+A thesis submitted in partial fulfilment of the requirements for the degree of\\ MSc Mathematical Modelling and Machine Learning
+\vfill{}
+\Large{School of Mathematical Sciences, \\
+University College Cork, \\
+Ireland \\
+\vspace{0.4cm}
+September 2025}
+\end{center}
+
+\end{titlepage}
+
+
+\chapter*{Declaration of Authorship}
+
+This report is wholly the work of the author, except where explicitly
+stated otherwise. The source of any material which was not created
+by the author has been clearly cited. \\
+\medskip{}
+
+\textbf{Date:} \quad \today
+
+\medskip{}
+
+\textbf{Signature:} 
+
+\chapter*{Acknowledgements}
+
+I would like to thank...
+
+\chapter*{Abstract}
+
+A brief overview of the thesis...
+
+\tableofcontents{}
+
+\listoffigures{}
+
+\newpage
+\input{background}
+
+\newpage
+\input{methods}
+
+\newpage
+\bibliographystyle{unsrt}
+\bibliography{references}
+
+\end{document}
