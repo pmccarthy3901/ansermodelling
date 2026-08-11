@@ -16,7 +16,7 @@
 \usepackage{xcolor}
 \usepackage{aurical}
 \usepackage[T1]{fontenc}
-
+\usepackage{booktabs}
 \definecolor{codegreen}{rgb}{0.133,0.545,0.133}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
 \definecolor{codepurple}{rgb}{0.58,0,0.827}
@@ -58,10 +58,8 @@
 \begin{document}
 The previous chapter ended with a question. Levenberg-Marquardt converges to a stationary point of the cost funciton, and which stationary point it reaches is determined by where it begins. The solver is only as good as its initial guess. This chapter builds a Neural-Network based initialiser which then provides an inital guess for LM to allow it to converge to the correct stationary point. 
 
-Section \ref{sec:datagen} implements the forward map in Python and fixes the sampling scheme. Section \ref{sec:lm} chatacterises the solver: its accuracy when initialised near the truth, its failure rate when initialised at a fixed point, and the basins of attraction. Section \ref{sec:representation} establishes the importance of choosing a good method to quantify "closeness", particularly with respect to angle. Section \ref{sec:network} determines the limits of a Neural-Network based solver and motivates the need for LM refinement. Section \ref{sec:hyrbid} joins the two halves and compares three solvers on a common test set: the network alone, a LM solver, and the network used to initailse the solver.
-
-Section 
-\section{Data genration}\label{sec:datagen}
+Section \ref{sec:datagen} implements the forward map in Python and fixes the sampling scheme. Section \ref{sec:methods-lm} chatacterises the solver: its accuracy when initialised near the truth, its failure rate when initialised at a fixed point, and the basins of attraction. Section \ref{sec:representation} establishes the importance of choosing a good method to quantify "closeness", particularly with respect to angle. Section \ref{sec:network} determines the limits of a Neural-Network based solver and motivates the need for LM refinement. Section \ref{sec:hyrbid} joins the two halves. 
+\section{Data generation}\label{sec:datagen}
 \subsection{Anser Simulation in Python}
 We simulate the Anser system in python, developing on a MATLAB simulation by Jaeger et al. \cite{jaeger2017}. \footnote{The implementation is available at
 \url{https://github.com/pmccarthy3901/ansermodelling}. A mapping from the
@@ -114,7 +112,7 @@ Since the sensor coil is on a PCB that is $1.6$mm thick, the $z$ value has a min
     $z$ & $1.6$ & $250$ \\
     \bottomrule
   \end{tabular}
-  \caption{Bounds of the padded sampling volume.}
+  \caption{Bounds of the sampling volume.}
   \label{tab:pos_bounds}
 \end{table}
 \subsubsection{Sampling the orientation}
@@ -132,7 +130,7 @@ Consider an area element $dA$ on the unit sphere, seen in figure \ref{fig:unit_s
     \bottomrule
   \end{tabular}
   \caption{Bounds of the oritation sampling volume.}
-  \label{tab:pos_bounds}
+  \label{tab:angle_bounds}
 \end{table}
 
 \missingfig{FIGURE OF AREA ELEMENT ON UNIT SPHERE}
@@ -156,7 +154,7 @@ and quantify the noise level by the signal-to-noise ratio
   \Phi_{\text{rms}} = \frac{1}{\sqrt{8}}\left\Vert \mathbf{\Phi} \right\Vert_2 .
 \end{equation}
 
-\section{Representing the pose}
+\section{Representing the pose}\label{sec:representation}
 The pose contains two angles, and how they are represented as regression targets matters more than it first appears. Regressing against $\theta$ and $\phi$ directly has two problems. First, $\phi$ is periodic: $\phi = 0.01$ and $\phi = 2\pi - 0.01$ are only seperated by $0.02$ rad, however a naive loss would heavily punish such a situation. The second problem is with theta: at the poles, theta is not defined.
 
 For these reasons, it becomes natural to represent the orientation not in terms of angles, but in terms of the unit normal itself:
@@ -185,7 +183,7 @@ The angular error, $e_{\hat{n}}$, is defined in relation to the unit normal orie
   e_{\hat{n}} := \arccos \left( \hat{n}_{true} \cdot \hat{n}_{pred} \right)
 \end{equation}
 
-\section{The Levenberg-Marquardt solver}
+\section{The Levenberg-Marquardt solver}\label{sec:methods-lm}
 The previous chapter derived the Levenberg-Marquardt update function \ref{eq:lm}. This section describes the implementation and parameter choice. 
 
 \subsection{Implementation}
@@ -203,15 +201,53 @@ where the floor of $10^{-12}$ guards against a zero diagonal entry making $D$ si
 
 \paragraph{Stopping.} Iteration stops when the gradient of the cost is sufficiently small, or when a maximum number of iterations is reached.
 
-\section{Neural Network Solver}
+\section{Neural Network Solver}\label{sec:network}
+Section \ref{sec:methods-lm} establishes that the LM solver needs a good initial guess to converge. This section builds a neural network solver, the main advantage of which is its ability to learn the global configuration of the system and thus work on a "cold start". This section shows the choice of architecture, loss function, and training methods.
+\subsection{Neural Network Architecture}
+The neural network solver uses a basic Feed Forward Neural Network (FFNN) which takes the 8 input measurements and outputs the 6 dimensional pose $(x,y,z,n_1,n_2,n_3)$. The neural network architecture is shown in Table \ref{tab:architecture} 
 
-\subsection{Neural Network Architecture and Training}
-The learned inverse is a 
+\begin{table}
+  \centering
+  \begin{tabular}{ll}
+    \toprule
+    Property & Value \\
+    \midrule
+    Input dimension       & 8 (measured fluxes) \\
+    Output dimension      & 6 ($x, y, z, n_1, n_2, n_3$) \\
+    Hidden layers         & 3 \\
+    Units per layer       & (256,256,256) \\
+    Activation            & tanh \\
+    \bottomrule
+  \end{tabular}
+  \caption{Network architecture.}
+  \label{tab:architecture}
+\end{table}
 \subsection{Choice of loss function}
-In Section \ref{sec:error} we defined two errors: $e_p$, the positional error, and $e_\hat{n}$, the angular error. Now we must define a loss funciton. The only problem is that these errors operate on completely different scales. Given the bounds of our box, $e_p$ varies between $0$ and $\sqrt{0.25^2+0.25^2+0.25^2} \approx 0.433$ and $e_{\hat{n}}$ varies between $0$ and $\pi$. To give equal weight to both components we define our loss, $\mathcal{L}$, as the weighted sum between the two as follows: 
+In Section \ref{sec:error} we defined two errors: $e_p$, the positional error, and $e_{\hat{n}}$, the angular error. Now we must define a loss funciton. The only problem is that these errors operate on completely different scales. Given the bounds of our box, $e_p$ varies between $0$ and $w_p = \sqrt{0.25^2+0.25^2+0.25^2} \approx 0.433$ and $e_{\hat{n}}$ varies between $0$ and $w_{\hat{n}} = \pi$. To give equal weight to both components we define our loss, $\mathcal{L}$, as the weighted sum between squares of the two as follows: 
 \begin{equation}
-  \mathcal{L} = e_p + \frac{\sqrt{0.1875}}{\pi}e_{\hat{n}}
+  \mathcal{L} = e_p^2 + \frac{w_p^2}{w_{\hat{n}}^2} e_{\hat{n}}^2
   \label{eq:loss}
 \end{equation}
-This means that, on average, the loss punishes positional and angular error equally.
+This weight is chosenso that the two terms have equal range over the sampling volume.
+\subsection{Neural Network Training:}
+The network is trained with the Adam optimiser \cite{kingma2015} to minimise \eqref{eq:loss} over the dataset described in Section \ref{sec:datagen}, using the settings and hyperparameters described in Table \ref{tab:training}
+
+The learning rate uses a cosine scheduler \cite{loshchilov2017}, decaying from its initial value to zero, following a cosine curve. This allows for a high learning rate at the start, which then decays smoothly at every epoch. This means that at the start the model learns quickly, and at the end the model has sufficiently small learning rate to not oscillate around the minimum. 
+
+\begin{table}
+  \centering
+  \begin{tabular}{ll}
+    \toprule
+    Parameter & Value \\
+    \midrule
+    Optimiser       & Adam \\
+    Learning rate   & 1e-3 \\
+    Schedule        & Cosine Annealing \\
+    Batch size      & 32 \\
+    Epochs          & 200 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Training configuration.}
+  \label{tab:training}
+\end{table}
 \end{document}

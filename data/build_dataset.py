@@ -2,7 +2,7 @@ from anser import *
 import numpy as np
 
 def build_dataset(
-        N : int = 1000000,
+        N : int = 100000,
         bounds : np.ndarray = np.array([
             [-0.125,0.125],
             [-0.125,0.125],
@@ -59,8 +59,4 @@ def build_dataset(
     return xs, ys
 
 
-if __name__ == "__main__":
-    xs , ys = build_dataset()
 
-    np.savez("data/dataset.npz", xs=xs, ys=ys)
-    print(f"Saved dataset: xs {xs.shape}, ys {ys.shape} to data/dataset.npz")

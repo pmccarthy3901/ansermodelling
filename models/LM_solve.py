@@ -37,8 +37,8 @@ def jacobian(f : callable,
     return J
 
 def apply_constraints(
-    x : np.ndarray
-    bounds : np.ndarray = np.array([-0.125,0.125],[-0.125,0.125],[0.0016,0.25],[0,np.pi],[0,2*np.pi])
+    x : np.ndarray,
+    bounds : np.ndarray = np.array([[-0.125,0.125],[-0.125,0.125],[0.0016,0.25],[0,np.pi],[0,2*np.pi]])
 ) -> np.ndarray:
     '''
     Puts a pose back into the "box" if it escapes
