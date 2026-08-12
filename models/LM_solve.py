@@ -71,6 +71,8 @@ def apply_constraints(
     out[...,3] = theta 
     out[...,4] = np.mod(phi, 2.0*np.pi)
 
+    return out
+
 
 def lm_solve(f : callable,
              y : np.ndarray, 
@@ -125,7 +127,7 @@ def lm_solve(f : callable,
         while True:
             delta = np.linalg.solve(JTJ + lam * D, -JTr)
 
-            x_trial = apply_constrains(x + delta)
+            x_trial = apply_constraints(x + delta)
             r_trial = f(x_trial) - y 
             cost_trial = r_trial @ r_trial 
 

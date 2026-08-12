@@ -27,10 +27,14 @@ The Anser EMT system uses a planar field generator consisting of 8 coils being d
   \caption{Specification of PCB emitter coils in Anser field generator \cite{jaeger2017}}
   \label{tab:coil_spec}
 \end{table}
-\missingfig{FIGURE OF SINGLE COIL}
-Eight of these coils are positioned on the PCB, as seen in Figure \ref{fig:field_coils}.
-\missingfig{Figure of 8 coil generator}
 
+Eight of these coils are positioned on the PCB, as seen in Figure \ref{fig:field_coils}.
+\begin{figure}
+  \centering
+  \includegraphics[width = 0.8 \textwidth]{figs/field_coils.png}
+  \caption{Diagram of 8 emitter coils arranged as on PCB}
+  \label{fig:field_coils}
+\end{figure}
 \subsection{The Tracking Sensor Coil}
 The tracking sensor records a measurement related to the flux, and due to the emitter coils running at different frequencies, is able to recover the 8 measurements due to each of the emitter coils after demodulation. These 8 measurements are fed into the pose solving algorithm to determine the position and orientation of the sensor.
 
