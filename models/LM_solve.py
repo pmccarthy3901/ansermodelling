@@ -56,9 +56,9 @@ def apply_constraints(
         Constrained pose
         
     '''
-    out = np.array(x)
+    out = np.array(x, dtype = float)
 
-    out[...,:3] = np.clip(out[...,:3],bounds[:,0],bounds[:,1])
+    out[...,:3] = np.clip(out[...,:3],bounds[:3,0],bounds[:3,1])
 
     theta = out[...,3]
     phi = out[...,4]
@@ -81,7 +81,7 @@ def lm_solve(f : callable,
              max_iter : int = 100,
              lambda_max : float = 1e7,
              eps_grad : float = 1e-5
-        ) -> tuple[np.ndarray,list[np.ndarray]]:
+        ) -> tuple[np.ndarray,list[np.ndarray],bool]:
     '''
     Implements the Levenberg-Marquardt algorithm for inverse solving. approximates x such that f(x) = y
 
@@ -107,8 +107,11 @@ def lm_solve(f : callable,
         Output of Levenberg-Marquardt.
     xs : list[np.ndarray] 
         Sequence of x guesses
+    Success : bool 
+        Indicates whether the solver failed.
     '''
 
+    success = False
     x = x0.copy()
     r = f(x) - y
     lam = lambda_0 
@@ -142,9 +145,12 @@ def lm_solve(f : callable,
             else: 
                 lam *= 10
                 if lam > lambda_max:
-                    return x, xs
+                    return x, xs, False
         
         #break when convergence slows down sufficiently
-        if np.linalg.norm(JTr, np.inf) < eps_grad: break 
+        if np.linalg.norm(JTr, np.inf) < eps_grad: 
+            success = True
+            break 
+
         
-    return x, xs
+    return x, xs, success

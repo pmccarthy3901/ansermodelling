@@ -111,7 +111,7 @@ def make_dataloaders(path : str,
         test_ds.y = test_ds.y[test_idx]
 
 
-    train_dataloader = DataLoader(train_ds, batch_size = batch_size, shuffle = True)
-    test_dataloader = DataLoader(test_ds,batch_size = batch_size)
+    train_dataloader = DataLoader(train_ds, batch_size = batch_size, num_workers = 4, shuffle = True)
+    test_dataloader = DataLoader(test_ds,batch_size = batch_size, num_workers =4)
 
     return train_dataloader, test_dataloader

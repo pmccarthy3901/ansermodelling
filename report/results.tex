@@ -1,0 +1,47 @@
+\chapter{Results}
+
+Chapter \ref{chap:methods} builds three solvers. This chapter evaluates each of the three solvers and compares them against one another. 
+
+\section{Experimental Setup:}
+All models are evaluated on the same held out test set consisting of 20,000 datapoints. 
+
+
+\subsection{Hardware Setup}
+Training and inference times are reported throughout this chapter. All computation is done on the same machine with specifications shown in Table \ref{tab:comp_specs}. Models are trained purely on the CPU.
+
+\begin{table}
+  \centering
+  \begin{tabular}{ll}
+    \toprule
+    Component & Model \\
+    \midrule
+    CPU  & AMD Ryzen 5 1600x \\
+    RAM  & 32GB DDR4 2133MT/S \\
+    GPU & Nvidia GTX 1070 8GB \\
+    \bottomrule
+  \end{tabular}
+  \caption{Computer specifications for training and infernece}
+  \label{tab:comp_specs}
+\end{table}
+
+\subsection{Convergence Critera}
+In Section \ref{sec:methods-lm} we define two constants, $\epsilon_p$ and $\epsilon_n$, which dictate when we consider a run to have "converged". In this chapter, we use the values shown in Table \ref{tab:conv_criteria}.
+
+\begin{table}
+  \centering
+  \begin{tabular}{ll}
+    \toprule
+    Parameter & Value \\
+    \midrule
+    $\epsilon_p$  & 1\,mm \\
+    $\epsilon_n$ & 1$^\circ$ \\
+    \bottomrule
+  \end{tabular}
+  \caption{Convergence Criteria for results reporting.}
+  \label{tab:conv_criteria}
+\end{table}
+
+\section{Three-way Comparison}
+
+
+
