@@ -8,7 +8,7 @@ def report_error_stats(pred : np.ndarray,
          eps_n = 1.00
          ) -> None:
 
-    ex, en = pose_errors(torch.as_tensor(pred), torch.as_tensor(true))
+    ex, en = pose_errors(torch.as_tensor(pred,dtype=torch.float64), torch.as_tensor(true,dtype=torch.float64))
     ex, en = ex.numpy(), en.numpy()
 
     print(f"Mean pos error: {ex.mean():.3g}, mean angle error: {en.mean():.3g}")

@@ -83,10 +83,12 @@ def pose_errors(pred : torch.Tensor,
     n_true = true[...,3:]
 
     e_x = torch.linalg.norm(x_pred - x_true, dim = -1) * 1000.0
-
+    
+    #was originally using arccos but ran into issues where I had to clamp the dot which meant that the angular error had a floor of 0.0256 degrees
     n_pred_hat = F.normalize(n_pred, dim=-1, eps=1e-8)
-    dot = (n_true * n_pred_hat).sum(dim =-1).clamp(-1.0 + 1e-7, 1.0 - 1e-7)
-    e_n = 180/np.pi * torch.arccos(dot)
+    dot = (n_true * n_pred_hat).sum(dim =-1)
+    cross = torch.linalg.cross(n_true,n_pred_hat,dim=-1).norm(dim=-1)
+    e_n = 180/np.pi * torch.atan2(cross,dot)
     
     return e_x, e_n
         
