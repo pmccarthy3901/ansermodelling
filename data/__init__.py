@@ -3,3 +3,5 @@ from .anser_dataset import AnserDataset
 from .anser_dataset import make_dataloaders
 from .reparametrisation import normal_to_angles
 from .reparametrisation import angles_to_normal
+from .reparametrisation import normal_to_angles_t
+from .reparametrisation import angles_to_normal_t

@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 import json
+from data.reparametrisation import angles_to_normal_t
 class PoseLoss(nn.Module):
     '''
     Loss function which gives a weighted sum between positional and angular loss.
@@ -76,6 +77,12 @@ def pose_errors(pred : torch.Tensor,
     e_x, e_n : torch.Tensor,torch.Tensor
         Position and angle errors (mm, deg)
     '''
+
+    if pred.shape[-1] == 5:
+        pred = angles_to_normal_t(pred)
+    if true.shape[-1] == 5:
+        true = angles_to_normal_t(true)
+
     x_pred = pred[...,:3]
     n_pred = pred[...,3:]
 

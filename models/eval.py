@@ -19,7 +19,7 @@ def report_error_stats(pred : np.ndarray,
 
     print(f"LM success rate: {success.mean():.3g}")
 
-    converged = success & (ex < eps_x) & (en < eps_n)
+    converged = (ex < eps_x) & (en < eps_n)
 
     print(f"Convergence rate: {converged.mean():.3g}")
 

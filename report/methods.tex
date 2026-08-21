@@ -1,4 +1,4 @@
-\chapter{Methods}
+\chapter{Methods}\label{chap:methods}
 The previous chapter ended with a question. Levenberg-Marquardt converges to a stationary point of the cost function, and which stationary point it reaches is determined by where it begins. So, how do we get into the right basin?
 
 The solver is only as good as its initial guess. This chapter builds a neural-network based initialiser which then provides an initial guess for LM to allow it to converge to the correct stationary point. 
@@ -225,7 +225,7 @@ The neural network solver uses a basic Feed Forward Neural Network (FFNN) which 
   \caption{Network architecture.}
   \label{tab:architecture}
 \end{table}
-\subsection{Choice of loss function}
+\subsection{Choice of loss function}\label{sec:methods-loss}
 In Section \ref{sec:error} we defined two errors: $e_p$, the positional error, and $e_{\hat{n}}$, the angular error. Now we must define a loss function. The only problem is that these errors operate on completely different scales. Given the bounds of our box, $e_p$ varies between $0$ and $w_p$, where $w_p$ is the diagonal length of the box, and $e_{\hat{n}}$ varies between $0$ and $w_{\hat{n}} = \pi$. To give equal weight to both components we define our loss, $\mathcal{L}$, as the weighted sum between squares of the two as follows: 
 \begin{equation}
   \mathcal{L} = e_p^2 + \frac{w_p^2}{w_{\hat{n}}^2} e_{\hat{n}}^2

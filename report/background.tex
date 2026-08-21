@@ -187,7 +187,7 @@ Now, remembering that this equation is linear and that each coil is made up of s
 \end{equation}
 Now, since we are in free space we use the identity $\mathbf{H} = \frac{\mathbf{B}}{\mu_0}$ \cite[p.~285]{griffiths2013}
 
-\section{Understanding the forward map}
+\section{Understanding the forward map}\label{sec:forward-map}
 The problem is framed as an inverse problem. The forward map takes position and orientation data and calculates 8 measurements from each of the coils. Our goal is to approximate an inverse to this map. To do so, we first try to understand the forward map. 
 \subsection{Definition and properties}
 First we define a pose vector $\mathbf{p} \in \mathbb{R}^5$ 
@@ -218,6 +218,7 @@ Then we define a vector of measurements, $\mathbf{m} \in \mathbb{R}^8$
 Now we can write the forward map: $\mathbf{F}(\mathbf{p}): \Omega \subset \mathbb{R}^5 \rightarrow \mathbb{R}^8$. More precisely,
 \begin{equation}
   m_i = \mathbf{H}_i(x,y,z) \cdot \hat{n}(\theta,\phi) 
+  \label{eq:forward}
 \end{equation}
 where $\mathbf{H}_i$ is the magnetic field calculated at $(x,y,z)$ due to coil $i$ using equation \eqref{eq:biot_savart_final}, and $\hat{n}(\theta,\phi)$ is the vector normal to the sensor, defined by: 
 
@@ -274,7 +275,7 @@ problem to be well posed.
 Given a function $f : \mathbb{R}^N \rightarrow \mathbb{R}^M$ with $M \geq N$, and a given $y \in \mathbb{R}^M$ suppose we want to find an $x \in \mathbb{R}^N$ that satisfies $y = f(x)$. In the case $m = n$ we could get bijectivity which would allow us to simply invert the map, however, in our case we have $n = 5$ and $m = 8$ so we cannot. This leads us to iterative methods.
 
 \subsection{Gauss-Newton}\label{sec:GN}
-The Gauss-Newton Algorithm \cite{} solves this exact kind of problem. 
+The Gauss-Newton Algorithm \cite{nocedal2006} solves this exact kind of problem. 
 
 We have a function $f : \mathbb{R}^n \rightarrow \mathbb{R}^m$ and we know $y \in \mathbb{R}^m$, we want to find $x_{\text{true}} \in \mathbb{R}^n$ such that $y = f(x_{\text{true}})$. We start with an initial guess $x_0 \in \mathbb{R}^n$ and define a residual:
 \begin{equation}
